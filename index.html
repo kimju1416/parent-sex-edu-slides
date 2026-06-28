@@ -149,11 +149,66 @@ td{padding:8px 12px;border:1px solid var(--bd);vertical-align:top;line-height:1.
 mark{background:#FFF8C5;padding:0 2px;border-radius:2px;color:var(--t1)}
 
 @media(max-width:700px){
+  body{font-size:17px}
   .sb{display:none}
-  .slide{padding:24px 20px 28px}
+
+  /* 슬라이드 영역 */
+  .slide{padding:22px 18px 36px}
   .g2,.g3{grid-template-columns:1fr}
-  .topbar{padding:10px 20px}
-  .nav{padding:10px 20px}
+
+  /* 상단 바 */
+  .topbar{padding:10px 16px}
+  .topbar-left{font-size:15px;font-weight:600;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .kbd-hint{display:none}
+
+  /* 하단 네비 */
+  .nav{padding:10px 14px;gap:10px}
+  .nbtn{padding:13px 0;font-size:16px;flex:1;text-align:center;border-radius:10px;min-height:50px;font-weight:500}
+  .mob-cnt{font-size:14px;color:var(--t2);white-space:nowrap;padding:0 6px}
+
+  /* 제목 */
+  .sh{font-size:22px}
+  .ss{font-size:15px}
+  hr{margin:14px 0}
+
+  /* callout */
+  .co{font-size:15.5px;padding:13px 14px;gap:10px}
+  .co-ic{font-size:20px}
+
+  /* card */
+  .card{padding:14px}
+  .card-lbl{font-size:12px}
+  .card-body{font-size:15.5px}
+  .card-body p{margin-bottom:6px}
+
+  /* steps */
+  .step{padding:11px 0;gap:11px}
+  .step-c{font-size:15.5px}
+  .step-lbl{font-size:11px}
+  .snum{width:26px;height:26px;font-size:12px;flex-shrink:0}
+
+  /* checklist */
+  .ck{font-size:15.5px;padding:10px 0}
+  .ck-ic{font-size:17px}
+
+  /* tags/badges */
+  .slide-tag{font-size:12px}
+  .bdg{font-size:12px}
+
+  /* cover */
+  .cover{min-height:unset;padding-top:16px;justify-content:flex-start}
+  .cv-emoji{font-size:46px;margin-bottom:16px}
+  .cv-title{font-size:26px}
+  .cv-desc{font-size:16px}
+
+  /* closing */
+  .closing{min-height:unset;padding-top:16px;justify-content:flex-start}
+  .closing>div:first-child{font-size:46px}
+  .closing>div:nth-child(2){font-size:24px}
+  .closing>div:nth-child(3){font-size:16px}
+
+  /* table */
+  th,td{font-size:13px;padding:7px 10px}
 }
 </style>
 </head>
@@ -1009,6 +1064,7 @@ mark{background:#FFF8C5;padding:0 2px;border-radius:2px;color:var(--t1)}
   <div class="nav">
     <button class="nbtn" id="prevBtn" onclick="move(-1)" disabled>← 이전</button>
     <span class="kbd-hint">← → 키보드로도 이동 가능합니다</span>
+    <span class="mob-cnt" id="mobCnt">1 / 20</span>
     <button class="nbtn" id="nextBtn" onclick="move(1)">다음 →</button>
   </div>
 </div><!-- /main -->
@@ -1068,6 +1124,7 @@ function goTo(n) {
   var pct = ((cur + 1) / total * 100).toFixed(1);
   document.getElementById('sbFill').style.width = pct + '%';
   document.getElementById('sbCnt').textContent = (cur + 1) + ' / ' + total;
+  document.getElementById('mobCnt').textContent = (cur + 1) + ' / ' + total;
   document.getElementById('topTitle').textContent = SLIDES[cur].name;
   document.getElementById('prevBtn').disabled = cur === 0;
   document.getElementById('nextBtn').disabled = cur === total - 1;
@@ -1085,6 +1142,22 @@ document.addEventListener('keydown', function(e) {
   if(e.key === 'ArrowRight') move(1);
   if(e.key === 'ArrowLeft') move(-1);
 });
+
+/* ── 스와이프 ── */
+var txs = 0, tys = 0;
+var slidesEl = document.getElementById('slides');
+slidesEl.addEventListener('touchstart', function(e) {
+  txs = e.changedTouches[0].clientX;
+  tys = e.changedTouches[0].clientY;
+}, {passive: true});
+slidesEl.addEventListener('touchend', function(e) {
+  var dx = txs - e.changedTouches[0].clientX;
+  var dy = tys - e.changedTouches[0].clientY;
+  if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 52) {
+    if(dx > 0) move(1);
+    else move(-1);
+  }
+}, {passive: true});
 
 buildSidebar();
 </script>
